@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>智邻便民 - 民生数字化解决方案演示</title>
+  <meta name="description" content="智邻便民·轻智慧城市一体化服务平台前端演示页面">
+  <link rel="stylesheet" href="./assets/css/style.css">
+</head>
+<body>
+  <div class="bg-layer bg-layer-a" aria-hidden="true"></div>
+  <div class="bg-layer bg-layer-b" aria-hidden="true"></div>
+
+  <header class="gov-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <img src="./assets/images/emblem-placeholder.svg" alt="平台标识" class="brand-logo">
+        <div class="brand-text">
+          <p class="brand-sub">民生数字化解决方案</p>
+          <p class="brand-main">智邻便民·轻智慧城市一体化服务平台</p>
+        </div>
+      </div>
+      <nav class="main-nav" aria-label="主导航">
+        <a href="#overview">项目总览</a>
+        <a href="#architecture">总体架构</a>
+        <a href="#modules">功能模块</a>
+        <a href="#cockpit">治理看板</a>
+        <a href="#metrics">成果指标</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section id="overview" class="section hero reveal">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <p class="kicker">以社区便民服务为入口 · AI 赋能基层治理</p>
+          <h1>打通居民服务端与基层治理端，形成双向闭环生态</h1>
+          <p class="intro">
+            聚焦“重基建、高投入、长周期”和“服务供需错配、数据壁垒、数字鸿沟”等基层痛点，
+            以轻量化底座实现“便民服务提效、基层治理减负、数字技术普惠”。
+          </p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#modules">查看核心功能</a>
+            <a class="btn btn-light" href="#cockpit">进入治理驾驶舱</a>
+          </div>
+        </div>
+        <div class="hero-panel">
+          <div class="cityline-card">
+            <img src="./assets/images/cityline.svg" alt="城市数字化示意图">
+          </div>
+          <div class="quick-stats">
+            <article class="stat-card">
+              <p class="stat-label">意图识别准确率</p>
+              <p class="stat-value"><span class="count-number" data-target="92">0</span><em>%+</em></p>
+            </article>
+            <article class="stat-card">
+              <p class="stat-label">诉求办结率</p>
+              <p class="stat-value"><span class="count-number" data-target="98">0</span><em>%+</em></p>
+            </article>
+            <article class="stat-card">
+              <p class="stat-label">系统可用性</p>
+              <p class="stat-value"><span class="count-number" data-target="99.9">0</span><em>%</em></p>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="architecture" class="section reveal">
+      <div class="container">
+        <div class="section-head">
+          <p class="section-kicker">四层联动架构</p>
+          <h2>数据互通、协同治理、闭环运营</h2>
+        </div>
+        <div class="architecture-grid">
+          <article class="arch-card">
+            <p class="arch-index">01</p>
+            <h3>便民服务中台</h3>
+            <p>居民一站式服务入口，语音交互、一码通城、生活服务与应急一键通覆盖“最后一公里”。</p>
+          </article>
+          <article class="arch-card">
+            <p class="arch-index">02</p>
+            <h3>AI 智能中枢</h3>
+            <p>统一提供意图识别、事件分类、智能派单、热点预测与风险预警等关键能力。</p>
+          </article>
+          <article class="arch-card">
+            <p class="arch-index">03</p>
+            <h3>轻智慧城市底座</h3>
+            <p>低成本数字孪生底座融合多源数据，打通街道、社区、服务商之间的数据链路。</p>
+          </article>
+          <article class="arch-card">
+            <p class="arch-index">04</p>
+            <h3>治理端管理平台</h3>
+            <p>社区微脑 + 一图统管 + 全流程闭环管理，为基层治理提供精细化可视工具。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="modules" class="section reveal">
+      <div class="container">
+        <div class="section-head">
+          <p class="section-kicker">核心功能模块</p>
+          <h2>围绕居民刚需与治理痛点的场景化能力</h2>
+        </div>
+        <div class="module-tabs" role="tablist" aria-label="功能分类">
+          <button class="tab-btn is-active" data-target="resident" role="tab" aria-selected="true">居民侧</button>
+          <button class="tab-btn" data-target="ai" role="tab" aria-selected="false">AI 能力侧</button>
+          <button class="tab-btn" data-target="governance" role="tab" aria-selected="false">治理管理侧</button>
+        </div>
+        <div class="module-panels">
+          <div class="module-panel is-active" id="resident" role="tabpanel">
+            <article class="module-card">
+              <h3>AI 便民助手</h3>
+              <p>支持文字与语音双入口，自动理解居民诉求，适配老年用户低学习门槛操作。</p>
+            </article>
+            <article class="module-card">
+              <h3>一码通城</h3>
+              <p>社区凭证、缴费、办事预约统一聚合，一码通行核心便民场景。</p>
+            </article>
+            <article class="module-card">
+              <h3>智慧生活服务</h3>
+              <p>家政、维修、生鲜配送等服务商按信用和距离智能匹配，提升到家服务效率。</p>
+            </article>
+            <article class="module-card">
+              <h3>应急一键通</h3>
+              <p>面向突发病痛、独居老人求助等场景，自动触发家属、网格员和应急联动流程。</p>
+            </article>
+          </div>
+          <div class="module-panel" id="ai" role="tabpanel">
+            <article class="module-card">
+              <h3>智能派单引擎</h3>
+              <p>综合地理位置、服务商负载、历史绩效进行动态调度，降低响应时间和成本。</p>
+            </article>
+            <article class="module-card">
+              <h3>事件智能分类</h3>
+              <p>NLP + 规则融合对诉求精准归类，减少人工分拣压力并提升流转准确率。</p>
+            </article>
+            <article class="module-card">
+              <h3>热点预测预警</h3>
+              <p>基于时空事件聚类发现风险趋势，实现从“被动响应”到“主动预防”。</p>
+            </article>
+            <article class="module-card">
+              <h3>可解释决策</h3>
+              <p>输出派单理由与判断依据，避免黑盒流程，便于审计和治理复盘。</p>
+            </article>
+          </div>
+          <div class="module-panel" id="governance" role="tabpanel">
+            <article class="module-card">
+              <h3>社区微脑</h3>
+              <p>以社区为最小治理单元，实时汇聚人、地、事、物数据，实现“一图统管”。</p>
+            </article>
+            <article class="module-card">
+              <h3>城市部件轻监测</h3>
+              <p>低功耗传感器 + 边缘网关覆盖路灯、井盖、消防等设施，低成本高可用。</p>
+            </article>
+            <article class="module-card">
+              <h3>动态运力调度</h3>
+              <p>对巡检队伍、志愿者与第三方服务资源进行弹性编排，保障高峰期响应能力。</p>
+            </article>
+            <article class="module-card">
+              <h3>全流程闭环管理</h3>
+              <p>从受理、派单、处置、回访到考核自动留痕，支持多层级统计与督办。</p>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="cockpit" class="section reveal">
+      <div class="container">
+        <div class="section-head">
+          <p class="section-kicker">治理端驾驶舱</p>
+          <h2>事件态势、资源调度、成效趋势一屏总览</h2>
+        </div>
+        <div class="cockpit-grid">
+          <article class="panel event-panel">
+            <h3>今日重点事件</h3>
+            <ul class="event-list">
+              <li><span class="tag high">高</span> 09:12 独居老人求助，已联动网格员与社区卫生站</li>
+              <li><span class="tag medium">中</span> 10:05 智能路灯故障，已自动派单市政维护队</li>
+              <li><span class="tag low">低</span> 10:38 菜场配送高峰，已开启运力弹性调度</li>
+              <li><span class="tag medium">中</span> 11:20 社区停车纠纷，已转入街道协调流程</li>
+            </ul>
+          </article>
+          <article class="panel board-panel">
+            <h3>社区一图统管</h3>
+            <div class="board-map" role="img" aria-label="社区治理地图示意">
+              <div class="node node-a">A 区</div>
+              <div class="node node-b">B 区</div>
+              <div class="node node-c">C 区</div>
+              <div class="node node-d">D 区</div>
+            </div>
+          </article>
+          <article class="panel chart-panel">
+            <h3>运行指标趋势</h3>
+            <div id="trendChart" class="chart"></div>
+            <div id="serviceChart" class="chart"></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="metrics" class="section reveal">
+      <div class="container">
+        <div class="section-head">
+          <p class="section-kicker">落地成果</p>
+          <h2>可衡量、可复制、可扩容</h2>
+        </div>
+        <div class="metric-grid">
+          <article class="metric-card">
+            <p class="metric-value"><span class="count-number" data-target="20">0</span><em>+</em></p>
+            <p class="metric-label">覆盖细分场景</p>
+          </article>
+          <article class="metric-card">
+            <p class="metric-value"><span class="count-number" data-target="200">0</span><em>ms</em></p>
+            <p class="metric-label">平均响应时间</p>
+          </article>
+          <article class="metric-card">
+            <p class="metric-value"><span class="count-number" data-target="1">0</span><em>天</em></p>
+            <p class="metric-label">基础环境部署</p>
+          </article>
+          <article class="metric-card">
+            <p class="metric-value"><span class="count-number" data-target="7">0</span><em>天</em></p>
+            <p class="metric-label">核心功能上线</p>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p>智邻便民·轻智慧城市一体化服务平台 Demo</p>
+      <p>建议对接：uni-app 前端、多端适配、Spring Cloud 微服务、IoT 边缘接入</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+  <script src="./assets/js/main.js"></script>
+</body>
+</html>

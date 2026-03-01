@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>智邻便民·后台管理</title>
+  <meta name="description" content="智邻便民服务端后台管理界面">
+  <link rel="stylesheet" href="./assets/css/style.css">
+</head>
+<body>
+  <div class="bg-mask"></div>
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="brand">
+        <p class="brand-kicker">基层治理数字化平台</p>
+        <h1>智邻便民·政务管理后台</h1>
+      </div>
+      <div class="header-meta">
+        <p id="adminNow">--</p>
+        <p>任务总线 / 居民端联动</p>
+      </div>
+    </div>
+  </header>
+
+  <main class="layout">
+    <aside class="sidebar panel">
+      <h2>居民用户</h2>
+      <p class="panel-tip">按居民ID管理其发布任务</p>
+      <div id="userList" class="user-list"></div>
+    </aside>
+
+    <section class="content">
+      <section class="toolbar panel">
+        <div class="toolbar-main">
+          <h2 id="selectedUserTitle">请选择居民用户</h2>
+          <p id="selectedUserMeta">任务将按居民 userId 进行筛选与管理</p>
+        </div>
+        <div class="toolbar-filters">
+          <select id="statusFilter" aria-label="状态筛选">
+            <option value="">全部状态</option>
+            <option value="pending">待受理</option>
+            <option value="in_progress">处理中</option>
+            <option value="completed">已办结</option>
+          </select>
+          <input id="keywordInput" type="text" placeholder="关键词：标题/描述/分类">
+          <button class="btn btn-light" id="queryBtn" type="button">查询</button>
+          <button class="btn btn-light" id="resetBtn" type="button">重置</button>
+        </div>
+      </section>
+
+      <section class="stats-grid">
+        <article class="stat-card panel">
+          <p class="stat-label">任务总数</p>
+          <p class="stat-value" id="statTotal">0</p>
+        </article>
+        <article class="stat-card panel">
+          <p class="stat-label">待受理</p>
+          <p class="stat-value" id="statPending">0</p>
+        </article>
+        <article class="stat-card panel">
+          <p class="stat-label">处理中</p>
+          <p class="stat-value" id="statProgress">0</p>
+        </article>
+        <article class="stat-card panel">
+          <p class="stat-label">已办结</p>
+          <p class="stat-value" id="statDone">0</p>
+        </article>
+      </section>
+
+      <section class="panel form-panel">
+        <h3>后台代录任务</h3>
+        <form id="createTaskForm">
+          <div class="form-grid">
+            <label>
+              任务标题
+              <input id="taskTitle" type="text" maxlength="60" required placeholder="例如：独居老人上门巡访">
+            </label>
+            <label>
+              任务分类
+              <select id="taskCategory" required>
+                <option value="">请选择</option>
+                <option value="环境卫生">环境卫生</option>
+                <option value="设施维修">设施维修</option>
+                <option value="养老服务">养老服务</option>
+                <option value="社区纠纷">社区纠纷</option>
+                <option value="其他">其他</option>
+              </select>
+            </label>
+            <label>
+              优先级
+              <select id="taskPriority" required>
+                <option value="normal">普通</option>
+                <option value="high">高</option>
+                <option value="urgent">紧急</option>
+                <option value="low">低</option>
+              </select>
+            </label>
+            <label>
+              初始状态
+              <select id="taskStatus" required>
+                <option value="pending">待受理</option>
+                <option value="in_progress">处理中</option>
+                <option value="completed">已办结</option>
+              </select>
+            </label>
+          </div>
+          <label>
+            任务描述
+            <textarea id="taskDetail" rows="3" required placeholder="写明时间、地点、参与方、风险点"></textarea>
+          </label>
+          <button class="btn btn-primary" type="submit" id="createTaskBtn">创建任务</button>
+        </form>
+      </section>
+
+      <section class="panel table-panel">
+        <div class="table-head">
+          <h3>居民任务列表</h3>
+          <p>操作权限：状态流转 / 编辑 / 删除</p>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>任务ID</th>
+                <th>居民信息</th>
+                <th>任务内容</th>
+                <th>分类/优先级</th>
+                <th>状态</th>
+                <th>更新时间</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="taskTableBody"></tbody>
+          </table>
+        </div>
+        <p id="emptyText" class="empty-text">暂无数据</p>
+      </section>
+    </section>
+  </main>
+
+  <dialog id="editDialog" class="dialog">
+    <form method="dialog" id="editForm" class="dialog-body">
+      <h3>编辑任务</h3>
+      <input id="editTaskId" type="hidden">
+      <label>
+        任务标题
+        <input id="editTitle" type="text" maxlength="60" required>
+      </label>
+      <label>
+        任务描述
+        <textarea id="editDetail" rows="3" required></textarea>
+      </label>
+      <div class="dialog-actions">
+        <button class="btn btn-light" value="cancel" type="button" id="cancelEditBtn">取消</button>
+        <button class="btn btn-primary" value="ok" type="submit">保存修改</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast"></div>
+  <script src="./assets/js/main.js"></script>
+</body>
+</html>

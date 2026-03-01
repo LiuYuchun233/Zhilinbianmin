@@ -1,0 +1,33 @@
+<svg width="1200" height="560" viewBox="0 0 1200 560" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="560" fill="#EAF3FE"/>
+  <path d="M0 500H1200V560H0V500Z" fill="#D6E7FA"/>
+  <path d="M58 288H132V500H58V288Z" fill="#B2CBE8"/>
+  <path d="M152 220H224V500H152V220Z" fill="#8FB4DC"/>
+  <path d="M242 262H310V500H242V262Z" fill="#A7C4E4"/>
+  <path d="M342 180H426V500H342V180Z" fill="#7CA7D6"/>
+  <path d="M444 244H516V500H444V244Z" fill="#9ABBE0"/>
+  <path d="M548 210H628V500H548V210Z" fill="#6F9ED1"/>
+  <path d="M648 266H716V500H648V266Z" fill="#ADC7E6"/>
+  <path d="M746 172H832V500H746V172Z" fill="#6D9BCB"/>
+  <path d="M850 238H926V500H850V238Z" fill="#88B0D9"/>
+  <path d="M946 204H1024V500H946V204Z" fill="#7CA7D4"/>
+  <path d="M1044 250H1132V500H1044V250Z" fill="#98BBE0"/>
+  <path d="M0 467C94 418.333 189.667 394 287 394C433 394 560.667 458 704 458C868 458 949 374 1200 374V500H0V467Z" fill="#0F5BA6" fill-opacity="0.14"/>
+  <path d="M0 445C112 389 209.333 361 292 361C459.333 361 588.667 431 740 431C894 431 1005 335 1200 335V500H0V445Z" fill="#CC2F2F" fill-opacity="0.1"/>
+  <circle cx="180" cy="150" r="38" fill="#FFFFFF" fill-opacity="0.35"/>
+  <circle cx="885" cy="110" r="52" fill="#FFFFFF" fill-opacity="0.28"/>
+  <path d="M86 332H104" stroke="#EAF3FE" stroke-width="6"/>
+  <path d="M86 362H104" stroke="#EAF3FE" stroke-width="6"/>
+  <path d="M176 248H194" stroke="#EAF3FE" stroke-width="6"/>
+  <path d="M176 282H194" stroke="#EAF3FE" stroke-width="6"/>
+  <path d="M176 316H194" stroke="#EAF3FE" stroke-width="6"/>
+  <path d="M370 214H388" stroke="#EAF3FE" stroke-width="6"/>
+  <path d="M370 246H388" stroke="#EAF3FE" stroke-width="6"/>
+  <path d="M370 278H388" stroke="#EAF3FE" stroke-width="6"/>
+  <path d="M774 210H792" stroke="#EAF3FE" stroke-width="6"/>
+  <path d="M774 242H792" stroke="#EAF3FE" stroke-width="6"/>
+  <path d="M774 274H792" stroke="#EAF3FE" stroke-width="6"/>
+  <path d="M972 240H990" stroke="#EAF3FE" stroke-width="6"/>
+  <path d="M972 272H990" stroke="#EAF3FE" stroke-width="6"/>
+  <path d="M972 304H990" stroke="#EAF3FE" stroke-width="6"/>
+</svg>

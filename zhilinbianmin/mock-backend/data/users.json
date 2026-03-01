@@ -1,0 +1,22 @@
+{
+  "users": [
+    {
+      "id": "resident-1001",
+      "name": "王阿姨",
+      "community": "海棠社区",
+      "phone": "138****1001"
+    },
+    {
+      "id": "resident-1002",
+      "name": "李叔叔",
+      "community": "兰亭社区",
+      "phone": "139****1022"
+    },
+    {
+      "id": "resident-1003",
+      "name": "张女士",
+      "community": "桂园社区",
+      "phone": "137****1033"
+    }
+  ]
+}

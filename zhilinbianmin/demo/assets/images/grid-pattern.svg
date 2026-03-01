@@ -1,0 +1,22 @@
+<svg width="360" height="360" viewBox="0 0 360 360" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="360" height="360" fill="#EDF4FC"/>
+  <g opacity="0.6">
+    <path d="M0 40H360" stroke="#D0E0F2"/>
+    <path d="M0 80H360" stroke="#D0E0F2"/>
+    <path d="M0 120H360" stroke="#D0E0F2"/>
+    <path d="M0 160H360" stroke="#D0E0F2"/>
+    <path d="M0 200H360" stroke="#D0E0F2"/>
+    <path d="M0 240H360" stroke="#D0E0F2"/>
+    <path d="M0 280H360" stroke="#D0E0F2"/>
+    <path d="M0 320H360" stroke="#D0E0F2"/>
+    <path d="M40 0V360" stroke="#D0E0F2"/>
+    <path d="M80 0V360" stroke="#D0E0F2"/>
+    <path d="M120 0V360" stroke="#D0E0F2"/>
+    <path d="M160 0V360" stroke="#D0E0F2"/>
+    <path d="M200 0V360" stroke="#D0E0F2"/>
+    <path d="M240 0V360" stroke="#D0E0F2"/>
+    <path d="M280 0V360" stroke="#D0E0F2"/>
+    <path d="M320 0V360" stroke="#D0E0F2"/>
+  </g>
+  <path d="M0 252C56 220.667 103.667 205 143 205C216 205 264.333 255 360 255V360H0V252Z" fill="#0F5BA6" fill-opacity="0.09"/>
+</svg>

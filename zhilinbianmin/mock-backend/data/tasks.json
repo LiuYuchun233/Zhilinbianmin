@@ -1,0 +1,40 @@
+{
+  "tasks": [
+    {
+      "id": "task-001",
+      "userId": "resident-1001",
+      "userName": "王阿姨",
+      "title": "路灯故障报修",
+      "detail": "海棠社区3号楼门口路灯夜间不亮",
+      "category": "设施维修",
+      "priority": "high",
+      "status": "in_progress",
+      "createdAt": "2026-02-28T09:10:00.000Z",
+      "updatedAt": "2026-03-01T01:20:00.000Z"
+    },
+    {
+      "id": "task-002",
+      "userId": "resident-1002",
+      "userName": "李叔叔",
+      "title": "增设助餐点建议",
+      "detail": "建议在东门活动中心增设老年助餐点",
+      "category": "养老服务",
+      "priority": "normal",
+      "status": "pending",
+      "createdAt": "2026-02-27T04:32:00.000Z",
+      "updatedAt": "2026-02-27T04:32:00.000Z"
+    },
+    {
+      "id": "task-003",
+      "userId": "resident-1003",
+      "userName": "张女士",
+      "title": "停车纠纷协调",
+      "detail": "晚间占道停车影响消防通道通行",
+      "category": "社区纠纷",
+      "priority": "urgent",
+      "status": "completed",
+      "createdAt": "2026-02-25T11:20:00.000Z",
+      "updatedAt": "2026-02-26T08:16:00.000Z"
+    }
+  ]
+}

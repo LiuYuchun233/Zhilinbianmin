@@ -1,0 +1,12 @@
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="g1" x1="12" y1="12" x2="108" y2="108" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0F5BA6"/>
+      <stop offset="1" stop-color="#0A3F76"/>
+    </linearGradient>
+  </defs>
+  <circle cx="60" cy="60" r="56" fill="url(#g1)"/>
+  <circle cx="60" cy="60" r="47" stroke="#F2F8FF" stroke-width="2" opacity="0.55"/>
+  <path d="M60 26L66.4 45.8H86.8L70.2 57.9L76.6 77.8L60 65.6L43.4 77.8L49.8 57.9L33.2 45.8H53.6L60 26Z" fill="#F2F8FF"/>
+  <text x="60" y="96" text-anchor="middle" fill="#F2F8FF" font-size="14" font-family="Microsoft YaHei, sans-serif" letter-spacing="2">民生</text>
+</svg>

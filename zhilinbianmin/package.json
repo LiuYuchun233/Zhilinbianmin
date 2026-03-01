@@ -1,0 +1,9 @@
+{
+  "name": "zhilinbianmin-mock",
+  "version": "1.0.0",
+  "private": true,
+  "description": "智邻便民前端 + Node.js JSON 模拟后端",
+  "scripts": {
+    "start": "node mock-backend/server.js"
+  }
+}
