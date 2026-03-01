@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="智邻便民 AI 智能助手，支持社区办事咨询、任务流程引导与对话问答。">
+  <title>智邻便民 AI 智能助手</title>
+  <link rel="icon" type="image/svg+xml" href="./assets/images/site-icon.svg">
+  <link rel="stylesheet" href="./assets/css/assistant.css">
+</head>
+<body>
+  <div class="assistant-shell">
+    <header class="assistant-header">
+      <a href="/" class="back-link">返回客户端首页</a>
+      <p class="head-kicker">ZHILIN AI SERVICE</p>
+      <h1>AI 智能助手</h1>
+      <p class="head-desc">可直接咨询报修、预约、缴费、长者服务等社区办事问题。</p>
+    </header>
+
+    <section class="prompt-strip" id="promptStrip" aria-label="快捷问题">
+      <button type="button" data-prompt="我要报修楼道灯不亮，应该怎么提任务？">报修流程</button>
+      <button type="button" data-prompt="帮我整理一个社区窗口预约办理的步骤清单。">预约清单</button>
+      <button type="button" data-prompt="家里老人需要陪诊，能推荐我怎么描述需求吗？">陪诊需求</button>
+      <button type="button" data-prompt="我想查看生活缴费入口，下一步怎么操作？">缴费入口</button>
+    </section>
+
+    <section class="chat-panel">
+      <div class="chat-log" id="chatLog" aria-live="polite"></div>
+
+      <form class="chat-form" id="chatForm">
+        <label for="chatInput">输入问题</label>
+        <textarea
+          id="chatInput"
+          rows="3"
+          maxlength="4000"
+          placeholder="例如：我想预约社区窗口办理医保，最快怎么走流程？"
+          required
+        ></textarea>
+        <div class="chat-actions">
+          <button type="button" class="ghost-btn" id="clearBtn">清空会话</button>
+          <button type="submit" class="primary-btn" id="sendBtn">发送</button>
+        </div>
+      </form>
+
+      <p class="chat-status" id="chatStatus" role="status"></p>
+    </section>
+  </div>
+
+  <script src="./assets/js/config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
+  <script src="./assets/js/assistant.js"></script>
+</body>
+</html>

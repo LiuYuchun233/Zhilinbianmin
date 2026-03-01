@@ -11,10 +11,22 @@ const ADMIN_DIR = path.join(ROOT_DIR, "admin");
 const DEMO_DIR = path.join(ROOT_DIR, "demo");
 const TASKS_FILE = process.env.TASKS_FILE || path.join(__dirname, "data", "tasks.json");
 const USERS_FILE = process.env.USERS_FILE || path.join(__dirname, "data", "users.json");
+const AI_CONFIG_FILE = path.join(__dirname, "config", "ai.json");
 
 const TOKEN_SECRET = String(process.env.AUTH_SECRET || "zhilinbianmin-demo-auth-secret");
 const TOKEN_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 const DEFAULT_PASSWORD = "123456";
+const DEFAULT_AI_CONFIG = {
+  url: "https://spark-api-open.xf-yun.com/v1/chat/completions",
+  model: "lite",
+  apiPassword: "",
+  systemPrompt: "You are a community service AI assistant. Reply in concise and actionable Chinese.",
+  timeoutMs: 30000,
+  maxTokens: 500,
+  topK: 6,
+  temperature: 0.5,
+  stream: true
+};
 
 const MIME_TYPES = {
   ".html": "text/html; charset=utf-8",
@@ -445,6 +457,221 @@ function applyTaskFilters(tasks, searchParams) {
   return items;
 }
 
+function toNumberOrFallback(value, fallback, min, max) {
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed)) return fallback;
+  if (typeof min === "number" && parsed < min) return fallback;
+  if (typeof max === "number" && parsed > max) return fallback;
+  return parsed;
+}
+
+async function readAiConfig() {
+  const parsed = await readJsonFile(AI_CONFIG_FILE, DEFAULT_AI_CONFIG);
+  const raw = parsed && typeof parsed === "object" ? parsed : {};
+
+  return {
+    url: String(raw.url || DEFAULT_AI_CONFIG.url).trim(),
+    model: String(raw.model || DEFAULT_AI_CONFIG.model).trim() || DEFAULT_AI_CONFIG.model,
+    apiPassword: String(raw.apiPassword || "").trim(),
+    systemPrompt:
+      String(raw.systemPrompt || DEFAULT_AI_CONFIG.systemPrompt).trim() || DEFAULT_AI_CONFIG.systemPrompt,
+    timeoutMs: toNumberOrFallback(raw.timeoutMs, DEFAULT_AI_CONFIG.timeoutMs, 1000, 120000),
+    maxTokens: toNumberOrFallback(raw.maxTokens, DEFAULT_AI_CONFIG.maxTokens, 1, 8192),
+    topK: toNumberOrFallback(raw.topK, DEFAULT_AI_CONFIG.topK, 1, 100),
+    temperature: toNumberOrFallback(raw.temperature, DEFAULT_AI_CONFIG.temperature, 0, 2),
+    stream: typeof raw.stream === "boolean" ? raw.stream : DEFAULT_AI_CONFIG.stream
+  };
+}
+
+function normalizeChatHistory(history) {
+  if (!Array.isArray(history)) return [];
+
+  const allowedRoles = new Set(["system", "user", "assistant"]);
+  return history
+    .map((item) => {
+      if (!item || typeof item !== "object") return null;
+      const role = String(item.role || "").trim();
+      const content = String(item.content || "").trim();
+      if (!allowedRoles.has(role) || !content) return null;
+      return {
+        role,
+        content: content.slice(0, 4000)
+      };
+    })
+    .filter(Boolean)
+    .slice(-12);
+}
+
+function toOneLineText(text) {
+  return String(text || "").replace(/\s+/g, " ").trim();
+}
+
+function buildAiConfigDebugInfo(aiConfig) {
+  const prompt = String(aiConfig && aiConfig.systemPrompt ? aiConfig.systemPrompt : "");
+  return {
+    configFile: AI_CONFIG_FILE,
+    url: String(aiConfig && aiConfig.url ? aiConfig.url : ""),
+    model: String(aiConfig && aiConfig.model ? aiConfig.model : ""),
+    timeoutMs: Number(aiConfig && aiConfig.timeoutMs ? aiConfig.timeoutMs : 0),
+    maxTokens: Number(aiConfig && aiConfig.maxTokens ? aiConfig.maxTokens : 0),
+    topK: Number(aiConfig && aiConfig.topK ? aiConfig.topK : 0),
+    temperature: Number(aiConfig && aiConfig.temperature ? aiConfig.temperature : 0),
+    stream: Boolean(aiConfig && aiConfig.stream),
+    hasApiPassword: Boolean(aiConfig && aiConfig.apiPassword),
+    systemPromptLength: prompt.length,
+    systemPromptPreview: toOneLineText(prompt).slice(0, 180)
+  };
+}
+
+function buildAiMessages(systemPrompt, history, message) {
+  const items = [];
+  const prompt = String(systemPrompt || "").trim();
+  if (prompt) {
+    items.push({
+      role: "system",
+      content: prompt.slice(0, 2000)
+    });
+  }
+  items.push(...history);
+  items.push({
+    role: "user",
+    content: String(message || "").trim()
+  });
+  return items;
+}
+
+function pickAssistantText(choice) {
+  if (!choice || typeof choice !== "object") return "";
+  if (choice.delta && typeof choice.delta.content === "string") {
+    return choice.delta.content;
+  }
+  if (choice.message && typeof choice.message.content === "string") {
+    return choice.message.content;
+  }
+  return "";
+}
+
+function extractAiErrorMessage(rawPayload) {
+  if (!rawPayload || typeof rawPayload !== "object") return "";
+  if (rawPayload.error && typeof rawPayload.error === "object") {
+    return String(rawPayload.error.message || rawPayload.error.code || "").trim();
+  }
+  if (rawPayload.error && typeof rawPayload.error === "string") {
+    return rawPayload.error.trim();
+  }
+  if (rawPayload.message && typeof rawPayload.message === "string" && rawPayload.code) {
+    return rawPayload.message.trim();
+  }
+  return "";
+}
+
+function parseAiStreamText(responseText) {
+  const lines = String(responseText || "").split(/\r?\n/);
+  const chunks = [];
+
+  for (const rawLine of lines) {
+    const line = rawLine.trim();
+    if (!line) continue;
+
+    let payload = null;
+    if (line.startsWith("data:")) {
+      const jsonText = line.slice(5).trim();
+      if (!jsonText || jsonText === "[DONE]") continue;
+      try {
+        payload = JSON.parse(jsonText);
+      } catch (_error) {
+        continue;
+      }
+    } else if (line.startsWith("{")) {
+      try {
+        payload = JSON.parse(line);
+      } catch (_error) {
+        continue;
+      }
+    }
+
+    if (!payload) continue;
+
+    const possibleError = extractAiErrorMessage(payload);
+    if (possibleError) {
+      return { content: "", error: possibleError };
+    }
+
+    if (Array.isArray(payload.choices)) {
+      payload.choices.forEach((choice) => {
+        const text = pickAssistantText(choice);
+        if (text) chunks.push(text);
+      });
+    }
+  }
+
+  const content = chunks.join("");
+  if (!content) {
+    return { content: "", error: "AI service returned no content" };
+  }
+  return { content, error: "" };
+}
+
+function parsePlainErrorText(responseText) {
+  const text = String(responseText || "").trim();
+  if (!text) return "";
+  try {
+    const parsed = JSON.parse(text);
+    const possibleError = extractAiErrorMessage(parsed);
+    if (possibleError) return possibleError;
+    if (typeof parsed.message === "string" && parsed.message.trim()) {
+      return parsed.message.trim();
+    }
+  } catch (_error) {
+    // ignore JSON parse error
+  }
+  return text.slice(0, 200);
+}
+
+async function callAiChatCompletion(payload, aiConfig) {
+  if (!aiConfig.apiPassword) {
+    throw new Error(`AI service is not configured: set apiPassword in ${AI_CONFIG_FILE}`);
+  }
+
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), aiConfig.timeoutMs);
+  try {
+    const response = await fetch(aiConfig.url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${aiConfig.apiPassword}`
+      },
+      body: JSON.stringify(payload),
+      signal: controller.signal
+    });
+
+    const responseText = await response.text();
+
+    if (!response.ok) {
+      const streamResult = parseAiStreamText(responseText);
+      const message =
+        streamResult.error ||
+        parsePlainErrorText(responseText) ||
+        `AI request failed with status ${response.status}`;
+      throw new Error(message);
+    }
+
+    const parsed = parseAiStreamText(responseText);
+    if (parsed.error) {
+      throw new Error(parsed.error);
+    }
+    return parsed.content;
+  } catch (error) {
+    if (error && error.name === "AbortError") {
+      throw new Error("AI request timeout");
+    }
+    throw error;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 async function handleApi(req, res, pathname, searchParams) {
   const method = req.method || "GET";
   const taskPathMatch = pathname.match(/^\/api\/tasks\/([^/]+)$/);
@@ -549,6 +776,97 @@ async function handleApi(req, res, pathname, searchParams) {
 
   if (pathname === "/api/auth/logout" && method === "POST") {
     sendJson(res, 200, { ok: true });
+    return;
+  }
+
+  if (pathname === "/api/ai/config" && method === "GET") {
+    const user = await requireAuthUser(req, res);
+    if (!user) return;
+
+    try {
+      const aiConfig = await readAiConfig();
+      sendJson(res, 200, {
+        ok: true,
+        userId: user.id,
+        config: buildAiConfigDebugInfo(aiConfig)
+      });
+    } catch (error) {
+      sendJson(res, 500, {
+        message: "Failed to read AI config",
+        detail: error && error.message ? error.message : "unknown"
+      });
+    }
+    return;
+  }
+
+  if (pathname === "/api/ai/chat" && method === "POST") {
+    const user = await requireAuthUser(req, res);
+    if (!user) return;
+
+    let body;
+    try {
+      body = await parseJsonBody(req);
+    } catch (error) {
+      sendJson(res, 400, { message: error.message });
+      return;
+    }
+
+    let aiConfig;
+    try {
+      aiConfig = await readAiConfig();
+    } catch (error) {
+      sendJson(res, 500, {
+        message: "Failed to read AI config",
+        detail: error && error.message ? error.message : "unknown"
+      });
+      return;
+    }
+
+    const message = String(body.message || "").trim();
+    const model = String(body.model || aiConfig.model || "lite").trim() || "lite";
+    const systemPrompt = String(body.systemPrompt || aiConfig.systemPrompt || "").trim();
+    const history = normalizeChatHistory(body.history);
+    const debugEnabled = searchParams.get("debug") === "1" || body.debug === true;
+
+    if (!message) {
+      sendJson(res, 400, { message: "message is required" });
+      return;
+    }
+    if (message.length > 4000) {
+      sendJson(res, 400, { message: "message is too long" });
+      return;
+    }
+
+    const requestPayload = {
+      model,
+      max_tokens: aiConfig.maxTokens,
+      top_k: aiConfig.topK,
+      temperature: aiConfig.temperature,
+      messages: buildAiMessages(systemPrompt, history, message),
+      stream: aiConfig.stream
+    };
+
+    try {
+      const content = await callAiChatCompletion(requestPayload, aiConfig);
+      const responsePayload = {
+        content,
+        model,
+        userId: user.id
+      };
+      if (debugEnabled) {
+        responsePayload.debug = {
+          aiConfig: buildAiConfigDebugInfo(aiConfig),
+          usedSystemPromptLength: systemPrompt.length,
+          usedSystemPromptPreview: toOneLineText(systemPrompt).slice(0, 180),
+          requestMessageCount: requestPayload.messages.length
+        };
+      }
+      sendJson(res, 200, responsePayload);
+    } catch (error) {
+      sendJson(res, 502, {
+        message: error && error.message ? error.message : "AI request failed"
+      });
+    }
     return;
   }
 
@@ -827,6 +1145,11 @@ async function requestHandler(req, res) {
       return;
     }
 
+    if (pathname === "/assistant" || pathname === "/assistant/" || pathname === "/assistant.html") {
+      await serveFile(res, CLIENT_DIR, "assistant.html");
+      return;
+    }
+
     if (pathname.startsWith("/assets/")) {
       const relativePath = pathname.replace(/^\/assets\//, "assets/");
       await serveFile(res, CLIENT_DIR, relativePath);
@@ -866,6 +1189,9 @@ const server = http.createServer(requestHandler);
 server.listen(PORT, () => {
   console.log(`Mock backend is running: http://localhost:${PORT}`);
   console.log(`Client page: http://localhost:${PORT}/`);
+  console.log(`AI page:     http://localhost:${PORT}/assistant`);
+  console.log(`AI config:   ${AI_CONFIG_FILE}`);
+  console.log(`AI config api: http://localhost:${PORT}/api/ai/config`);
   console.log(`Admin page:  http://localhost:${PORT}/admin/`);
   console.log(`Demo page:   http://localhost:${PORT}/demo/`);
   console.log("Auth endpoints: /api/auth/register, /api/auth/login, /api/auth/me");

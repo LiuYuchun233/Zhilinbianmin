@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="智邻便民客户端 - 手机号密码登录与便民任务服务演示">
+  <meta name="description" content="智邻便民客户端 - 手机号密码注册登录、便民任务与社区生活服务">
   <title>智邻便民客户端</title>
   <link rel="icon" type="image/svg+xml" href="./assets/images/site-icon.svg">
   <link rel="stylesheet" href="./assets/css/style.css">
@@ -11,9 +11,9 @@
 <body>
   <section id="authGate" class="auth-gate">
     <div class="auth-card">
-      <p class="auth-kicker">智邻便民</p>
+      <p class="auth-kicker">ZHILIN SERVICE HUB</p>
       <h1>手机号 + 密码登录</h1>
-      <p class="auth-sub">新用户可先注册账号，再登录进入客户端。</p>
+      <p class="auth-sub">一个账号连接便民办事、社区任务、生活服务与适老化设置。</p>
 
       <div class="auth-tabs">
         <button type="button" class="auth-tab is-active" data-auth-tab="login">登录</button>
@@ -22,10 +22,10 @@
 
       <form id="loginForm" class="auth-form is-active">
         <label for="loginPhone">手机号</label>
-        <input id="loginPhone" name="phone" type="tel" inputmode="numeric" pattern="^1[0-9]{10}$" placeholder="11 位手机号" required>
+        <input id="loginPhone" name="phone" type="tel" inputmode="numeric" pattern="1[0-9]{10}" maxlength="11" placeholder="请输入11位手机号" required>
 
         <label for="loginPassword">密码</label>
-        <input id="loginPassword" name="password" type="password" minlength="6" placeholder="至少 6 位" required>
+        <input id="loginPassword" name="password" type="password" minlength="6" placeholder="至少6位密码" required>
 
         <button class="primary-btn" type="submit" id="loginBtn">登录</button>
       </form>
@@ -35,13 +35,13 @@
         <input id="registerName" name="name" type="text" maxlength="30" placeholder="请输入姓名" required>
 
         <label for="registerPhone">手机号</label>
-        <input id="registerPhone" name="phone" type="tel" inputmode="numeric" pattern="^1[0-9]{10}$" placeholder="11 位手机号" required>
+        <input id="registerPhone" name="phone" type="tel" inputmode="numeric" pattern="1[0-9]{10}" maxlength="11" placeholder="请输入11位手机号" required>
 
         <label for="registerCommunity">所在社区</label>
-        <input id="registerCommunity" name="community" type="text" maxlength="60" placeholder="如：海棠社区" required>
+        <input id="registerCommunity" name="community" type="text" maxlength="60" placeholder="例如：海棠社区" required>
 
         <label for="registerPassword">密码</label>
-        <input id="registerPassword" name="password" type="password" minlength="6" placeholder="至少 6 位" required>
+        <input id="registerPassword" name="password" type="password" minlength="6" placeholder="至少6位密码" required>
 
         <label for="registerConfirm">确认密码</label>
         <input id="registerConfirm" name="confirmPassword" type="password" minlength="6" placeholder="请再次输入密码" required>
@@ -49,65 +49,142 @@
         <button class="primary-btn" type="submit" id="registerBtn">注册并登录</button>
       </form>
 
-      <p class="auth-hint">演示默认账号（密码均为 123456）：13800001001 / 13900001002 / 13700001003</p>
+      <p class="auth-hint">演示账号（密码均为 123456）：13800001001 / 13900001002 / 13700001003</p>
     </div>
   </section>
 
   <div class="app-shell is-hidden" id="appShell">
     <header class="topbar">
-      <div class="city">
-        <p class="city-sub">社区便民服务中心</p>
+      <div class="topbar-main">
+        <p class="city-sub">智慧社区便民运营中心</p>
         <h1>智邻便民客户端</h1>
         <p class="signed-user">当前账号：<span id="currentUserPhone">-</span></p>
       </div>
       <div class="time-card">
         <p id="todayDate">--</p>
-        <p>晴 22℃</p>
+        <p>服务在线中</p>
       </div>
     </header>
 
-    <section class="elder-tools card">
-      <h2>适老化设置</h2>
-      <div class="tool-grid">
-        <button class="tool-btn" id="toggleLargeFont" type="button">大字模式：关</button>
-        <button class="tool-btn" id="toggleContrast" type="button">高对比：关</button>
-        <button class="tool-btn" id="voiceRead" type="button">语音播报</button>
-      </div>
-    </section>
-
     <main>
       <section class="tab-page is-active" data-page="home">
-        <section class="banner card">
-          <p class="banner-kicker">民生服务一站直达</p>
-          <h2>一句话说需求，系统帮你快速办</h2>
-          <p>已接入便民办事、生活缴费、应急求助、到家服务等核心场景。</p>
-        </section>
-
-        <section class="quick-actions card">
-          <h2>常用服务</h2>
-          <div class="action-grid">
-            <button class="action-btn" data-action="assistant">AI 便民助手</button>
-            <button class="action-btn" data-action="code">一码通城</button>
-            <button class="action-btn" data-action="pay">生活缴费</button>
-            <button class="action-btn" data-action="booking">办事预约</button>
-            <button class="action-btn" data-action="home">家政到家</button>
-            <button class="action-btn" data-action="fresh">生鲜配送</button>
-            <button class="action-btn danger" data-action="emergency">应急一键通</button>
-            <button class="action-btn" data-action="request">我的任务</button>
+        <section class="card hero-card">
+          <p class="hero-kicker">社区民生服务一站办理</p>
+          <h2>把高频便民服务做成一个可触达的首页</h2>
+          <p>输入关键词快速定位服务模块，收藏常用入口，减少重复查找成本。</p>
+          <div class="service-search-wrap">
+            <input id="serviceSearch" type="search" placeholder="搜索服务，如：缴费、报修、预约、陪诊">
           </div>
         </section>
 
-        <section class="hotline card">
-          <h2>热点提醒</h2>
-          <ul id="newsList">
-            <li>11:20 社区卫生站今日开放慢病义诊窗口。</li>
-            <li>10:35 老旧小区电梯巡检中，预计 15:00 完成。</li>
-            <li>09:40 菜市场高峰保障运力已开启，配送时效提升。</li>
-          </ul>
+        <section class="metric-grid">
+          <article class="metric-card">
+            <p class="metric-label">任务总数</p>
+            <p class="metric-num" id="homeTotalTasks">0</p>
+          </article>
+          <article class="metric-card">
+            <p class="metric-label">待处理</p>
+            <p class="metric-num" id="homePendingTasks">0</p>
+          </article>
+          <article class="metric-card">
+            <p class="metric-label">完成率</p>
+            <p class="metric-num" id="homeDoneRate">0%</p>
+          </article>
+        </section>
+
+        <section class="card notice-card">
+          <div class="section-head">
+            <h2>社区公告</h2>
+            <div id="noticeFilters" class="chip-group">
+              <button type="button" class="chip-btn is-active" data-notice-type="all">全部</button>
+              <button type="button" class="chip-btn" data-notice-type="service">服务</button>
+              <button type="button" class="chip-btn" data-notice-type="safety">安全</button>
+              <button type="button" class="chip-btn" data-notice-type="activity">活动</button>
+            </div>
+          </div>
+          <ul id="noticeList" class="notice-list"></ul>
+        </section>
+
+        <section class="card">
+          <div class="section-head">
+            <h2>核心服务</h2>
+            <p class="section-sub">可收藏常用入口，登录后自动记忆</p>
+          </div>
+          <div class="quick-service-grid" id="quickServiceGrid">
+            <article class="service-tile" data-service-key="assistant" data-service-name="AI便民助手">
+              <button type="button" class="fav-btn" data-fav="assistant" aria-label="收藏AI便民助手">☆</button>
+              <h3>AI便民助手</h3>
+              <p>自然语言提交诉求与咨询。</p>
+              <button class="action-btn" data-action="assistant" type="button">进入服务</button>
+            </article>
+            <article class="service-tile" data-service-key="pay" data-service-name="生活缴费">
+              <button type="button" class="fav-btn" data-fav="pay" aria-label="收藏生活缴费">☆</button>
+              <h3>生活缴费</h3>
+              <p>水电燃、物业、停车统一入口。</p>
+              <button class="action-btn" data-action="pay" type="button">立即缴费</button>
+            </article>
+            <article class="service-tile" data-service-key="booking" data-service-name="办事预约">
+              <button type="button" class="fav-btn" data-fav="booking" aria-label="收藏办事预约">☆</button>
+              <h3>办事预约</h3>
+              <p>社区窗口、医保与街道服务预约。</p>
+              <button class="action-btn" data-action="booking" type="button">去预约</button>
+            </article>
+            <article class="service-tile" data-service-key="home" data-service-name="到家服务">
+              <button type="button" class="fav-btn" data-fav="home" aria-label="收藏到家服务">☆</button>
+              <h3>到家服务</h3>
+              <p>家政保洁、维修、护理一键下单。</p>
+              <button class="action-btn" data-action="home" type="button">去下单</button>
+            </article>
+            <article class="service-tile" data-service-key="fresh" data-service-name="生鲜配送">
+              <button type="button" class="fav-btn" data-fav="fresh" aria-label="收藏生鲜配送">☆</button>
+              <h3>生鲜配送</h3>
+              <p>周边商超协同，90分钟送达。</p>
+              <button class="action-btn" data-action="fresh" type="button">去购买</button>
+            </article>
+            <article class="service-tile" data-service-key="request" data-service-name="我的任务">
+              <button type="button" class="fav-btn" data-fav="request" aria-label="收藏我的任务">☆</button>
+              <h3>我的任务</h3>
+              <p>报修、投诉、求助统一工单管理。</p>
+              <button class="action-btn" data-action="request" type="button">查看任务</button>
+            </article>
+            <article class="service-tile emergency" data-service-key="emergency" data-service-name="应急求助">
+              <button type="button" class="fav-btn" data-fav="emergency" aria-label="收藏应急求助">☆</button>
+              <h3>应急求助</h3>
+              <p>紧急事件一键上报到网格中心。</p>
+              <button class="action-btn danger" data-action="emergency" type="button">立即求助</button>
+            </article>
+            <article class="service-tile" data-service-key="code" data-service-name="一码通城">
+              <button type="button" class="fav-btn" data-fav="code" aria-label="收藏一码通城">☆</button>
+              <h3>一码通城</h3>
+              <p>门禁、签到与便民场景统一码。</p>
+              <button class="action-btn" data-action="code" type="button">立即开通</button>
+            </article>
+          </div>
+        </section>
+
+        <section class="card fav-card">
+          <div class="section-head">
+            <h2>我的常用服务</h2>
+            <p class="section-sub">点击右侧按钮直接进入</p>
+          </div>
+          <ul id="favoriteList" class="favorite-list"></ul>
         </section>
       </section>
 
       <section class="tab-page" data-page="services">
+        <section class="card">
+          <div class="section-head">
+            <h2>任务模板</h2>
+            <p class="section-sub">先选择模板，再补充具体信息更高效</p>
+          </div>
+          <div class="template-grid" id="templateGrid">
+            <button type="button" class="template-btn" data-title="路灯故障报修" data-category="设施维修" data-priority="normal" data-detail="社区路灯不亮，请安排维修，时间：，地点：，影响范围：。">路灯故障</button>
+            <button type="button" class="template-btn" data-title="楼道卫生清理" data-category="环境卫生" data-priority="normal" data-detail="楼道有垃圾堆积，请安排保洁处理，楼栋：，单元：。">卫生清理</button>
+            <button type="button" class="template-btn" data-title="老人陪诊服务申请" data-category="养老服务" data-priority="high" data-detail="为家中老人申请陪诊服务，就诊时间：，医院：，联系人：。">陪诊申请</button>
+            <button type="button" class="template-btn" data-title="邻里纠纷协调" data-category="社区纠纷" data-priority="high" data-detail="需要社区介入协调，事件描述：，发生时间：，地点：。">纠纷协调</button>
+          </div>
+        </section>
+
         <section class="card form-card">
           <h2>新建任务</h2>
           <form id="taskForm">
@@ -121,6 +198,7 @@
               <option value="设施维修">设施维修</option>
               <option value="养老服务">养老服务</option>
               <option value="社区纠纷">社区纠纷</option>
+              <option value="生活服务">生活服务</option>
               <option value="其他">其他</option>
             </select>
 
@@ -133,7 +211,7 @@
             </select>
 
             <label for="taskDetail">任务描述</label>
-            <textarea id="taskDetail" rows="4" placeholder="请尽量写清楚时间、地点、问题现象" required></textarea>
+            <textarea id="taskDetail" rows="4" placeholder="请补充时间、地点、影响范围和诉求" required></textarea>
 
             <button class="primary-btn" type="submit" id="taskSubmitBtn">提交任务</button>
           </form>
@@ -149,27 +227,46 @@
               <option value="completed">已办结</option>
             </select>
           </div>
-          <p class="api-hint">登录手机号：<span id="currentUserId">-</span> | 接口：GET/POST/DELETE /api/me/tasks</p>
+          <p class="api-hint">当前登录账号：<span id="currentUserId">-</span> | 接口：GET/POST/DELETE /api/me/tasks</p>
           <ul id="taskList" class="task-list"></ul>
           <p id="taskEmpty" class="empty-tip">暂无任务，先提交一条试试。</p>
         </section>
       </section>
 
       <section class="tab-page" data-page="life">
-        <section class="card life-card">
-          <h2>生活服务</h2>
-          <div class="service-item">
-            <p>家政保洁（2小时）</p>
-            <button class="ghost-btn" data-action="home">立即预约</button>
+        <section class="card">
+          <div class="section-head">
+            <h2>生活服务专区</h2>
+            <p class="section-sub">更贴近日常消费与到家服务的商业化入口</p>
           </div>
-          <div class="service-item">
-            <p>长者陪诊服务</p>
-            <button class="ghost-btn" data-action="booking">立即预约</button>
+          <div class="life-grid">
+            <article class="life-item">
+              <h3>家政保洁</h3>
+              <p>2小时起约，支持按次与包月。</p>
+              <button class="ghost-btn" data-action="home" type="button">立即预约</button>
+            </article>
+            <article class="life-item">
+              <h3>长者陪诊</h3>
+              <p>全流程陪护，减少家属请假成本。</p>
+              <button class="ghost-btn" data-action="booking" type="button">立即预约</button>
+            </article>
+            <article class="life-item">
+              <h3>生鲜优选</h3>
+              <p>品质蔬果每日上新，社区专享价。</p>
+              <button class="ghost-btn" data-action="fresh" type="button">立即下单</button>
+            </article>
           </div>
-          <div class="service-item">
-            <p>生鲜配送（90分钟达）</p>
-            <button class="ghost-btn" data-action="fresh">立即下单</button>
-          </div>
+        </section>
+
+        <section class="card">
+          <h2>快速下单模拟</h2>
+          <form id="orderSimForm">
+            <label for="orderPhone">联系手机号</label>
+            <input id="orderPhone" type="tel" inputmode="numeric" pattern="1[0-9]{10}" maxlength="11" placeholder="11位手机号">
+            <label for="orderNeed">服务需求</label>
+            <textarea id="orderNeed" rows="3" placeholder="例如：明早9点上门保洁，两居室"></textarea>
+            <button class="primary-btn" type="submit" id="orderSimBtn">提交模拟订单</button>
+          </form>
         </section>
       </section>
 
@@ -182,7 +279,6 @@
               <p id="profileUserMeta">登录后可查看账号信息</p>
             </div>
           </div>
-          <button class="ghost-btn logout-btn" id="logoutBtn" type="button">退出登录</button>
           <div class="profile-stats">
             <article>
               <p class="num" id="taskCount">0</p>
@@ -197,6 +293,30 @@
               <p>待处理</p>
             </article>
           </div>
+        </section>
+
+        <section class="card">
+          <h2>适老化设置</h2>
+          <div class="tool-grid">
+            <button class="tool-btn" id="toggleLargeFont" type="button">大字模式：关</button>
+            <button class="tool-btn" id="toggleContrast" type="button">高对比：关</button>
+            <button class="tool-btn" id="voiceRead" type="button">语音播报公告</button>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>账号服务</h2>
+          <div class="mine-links">
+            <button type="button" class="ghost-btn mine-link" data-action="request">查看我的任务</button>
+            <button type="button" class="ghost-btn mine-link" data-action="assistant">咨询AI助手</button>
+            <button type="button" class="ghost-btn mine-link" data-action="code">查看一码通城</button>
+          </div>
+          <button class="ghost-btn logout-btn" id="logoutBtn" type="button">退出登录</button>
+        </section>
+
+        <section class="card">
+          <h2>最近动态</h2>
+          <ul id="activityList" class="activity-list"></ul>
         </section>
       </section>
     </main>
@@ -218,6 +338,7 @@
   </dialog>
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
   <script src="./assets/js/config.js"></script>
   <script src="./assets/js/main.js"></script>
 </body>

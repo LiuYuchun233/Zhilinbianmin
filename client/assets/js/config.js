@@ -14,6 +14,7 @@
       authLogin: "/api/auth/login",
       authMe: "/api/auth/me",
       authLogout: "/api/auth/logout",
+      aiChat: "/api/ai/chat",
       myTasks: "/api/me/tasks",
       myTaskById: function (id) {
         return "/api/me/tasks/" + encodeURIComponent(id);
