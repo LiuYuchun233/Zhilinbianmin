@@ -2,7 +2,15 @@
   var config = window.APP_CONFIG || {};
   var apiBase = String(config.API_BASE || "");
   var endpoints = config.ENDPOINTS || {};
-  var currentUser = config.CURRENT_USER || { id: "resident-1001", name: "王阿姨" };
+  var storageKeys = config.STORAGE_KEYS || {};
+
+  var authGate = document.getElementById("authGate");
+  var authTabs = document.querySelectorAll(".auth-tab");
+  var authForms = document.querySelectorAll(".auth-form");
+  var loginForm = document.getElementById("loginForm");
+  var registerForm = document.getElementById("registerForm");
+  var loginBtn = document.getElementById("loginBtn");
+  var registerBtn = document.getElementById("registerBtn");
 
   var appShell = document.getElementById("appShell");
   var todayDate = document.getElementById("todayDate");
@@ -30,8 +38,14 @@
   var taskDoneRate = document.getElementById("taskDoneRate");
   var taskPendingCount = document.getElementById("taskPendingCount");
   var currentUserIdEl = document.getElementById("currentUserId");
+  var currentUserPhoneEl = document.getElementById("currentUserPhone");
+  var profileUserNameEl = document.getElementById("profileUserName");
+  var profileUserMetaEl = document.getElementById("profileUserMeta");
+  var logoutBtn = document.getElementById("logoutBtn");
 
   var state = {
+    authToken: readLocal(storageKeys.authToken),
+    currentUser: readLocalJson(storageKeys.currentUser),
     tasks: []
   };
 
@@ -58,11 +72,11 @@
     },
     fresh: {
       title: "生鲜配送",
-      content: "已开启周边市场运力协同，常规时段90分钟内送达。"
+      content: "已开启周边市场运力协同，常规时段 90 分钟内送达。"
     },
     request: {
       title: "我的任务",
-      content: "客户端仅支持新增和删除任务，任务状态由后台管理员处理。"
+      content: "客户端支持新建和删除任务，任务状态由后台管理员处理。"
     }
   };
 
@@ -84,6 +98,48 @@
     high: "高",
     urgent: "紧急"
   };
+
+  function readLocal(key) {
+    try {
+      return key ? window.localStorage.getItem(key) || "" : "";
+    } catch (_error) {
+      return "";
+    }
+  }
+
+  function readLocalJson(key) {
+    try {
+      if (!key) return null;
+      var raw = window.localStorage.getItem(key);
+      if (!raw) return null;
+      return JSON.parse(raw);
+    } catch (_error) {
+      return null;
+    }
+  }
+
+  function writeLocal(key, value) {
+    try {
+      if (!key) return;
+      if (value === null || typeof value === "undefined" || value === "") {
+        window.localStorage.removeItem(key);
+      } else {
+        window.localStorage.setItem(key, value);
+      }
+    } catch (_error) {
+      // ignore storage errors
+    }
+  }
+
+  function normalizeUser(user) {
+    var next = user || {};
+    return {
+      id: String(next.id || ""),
+      name: String(next.name || "居民用户"),
+      community: String(next.community || ""),
+      phone: String(next.phone || "")
+    };
+  }
 
   function setToday() {
     var now = new Date();
@@ -113,6 +169,16 @@
     });
     pages.forEach(function (page) {
       page.classList.toggle("is-active", page.dataset.page === tab);
+    });
+  }
+
+  function setAuthTab(tab) {
+    authTabs.forEach(function (btn) {
+      btn.classList.toggle("is-active", btn.dataset.authTab === tab);
+    });
+    authForms.forEach(function (form) {
+      var active = form.id === tab + "Form";
+      form.classList.toggle("is-active", active);
     });
   }
 
@@ -154,8 +220,19 @@
     return apiBase + path;
   }
 
-  async function requestApi(path, options) {
-    var response = await fetch(apiUrl(path), options || {});
+  function buildHeaders(options, withAuth) {
+    var headers = Object.assign({}, (options && options.headers) || {});
+    if (withAuth && state.authToken) {
+      headers.Authorization = "Bearer " + state.authToken;
+    }
+    return headers;
+  }
+
+  async function requestApi(path, options, withAuth) {
+    var requestOptions = Object.assign({}, options || {});
+    requestOptions.headers = buildHeaders(options, withAuth !== false);
+
+    var response = await fetch(apiUrl(path), requestOptions);
     var payload = null;
     try {
       payload = await response.json();
@@ -167,6 +244,41 @@
       throw new Error(message);
     }
     return payload;
+  }
+
+  function showAuthView() {
+    authGate.classList.remove("is-hidden");
+    appShell.classList.add("is-hidden");
+  }
+
+  function showAppView() {
+    authGate.classList.add("is-hidden");
+    appShell.classList.remove("is-hidden");
+  }
+
+  function persistAuth() {
+    writeLocal(storageKeys.authToken, state.authToken || "");
+    writeLocal(storageKeys.currentUser, state.currentUser ? JSON.stringify(state.currentUser) : "");
+  }
+
+  function clearAuth() {
+    state.authToken = "";
+    state.currentUser = null;
+    persistAuth();
+  }
+
+  function updateUserInfo() {
+    var user = normalizeUser(state.currentUser);
+    if (currentUserIdEl) currentUserIdEl.textContent = user.phone || "-";
+    if (currentUserPhoneEl) currentUserPhoneEl.textContent = user.phone || "-";
+    if (profileUserNameEl) profileUserNameEl.textContent = user.name || "居民用户";
+    if (profileUserMetaEl) {
+      var segments = [];
+      if (user.id) segments.push("账号ID：" + user.id);
+      if (user.community) segments.push("社区：" + user.community);
+      if (!segments.length) segments.push("请完成登录");
+      profileUserMetaEl.textContent = segments.join(" | ");
+    }
   }
 
   function escapeHtml(text) {
@@ -225,15 +337,16 @@
   }
 
   async function loadTasks() {
-    var query = ["userId=" + encodeURIComponent(currentUser.id)];
+    var query = [];
     if (statusFilter.value) {
       query.push("status=" + encodeURIComponent(statusFilter.value));
     }
+    var queryText = query.length ? "?" + query.join("&") : "";
 
     try {
       taskEmpty.style.display = "block";
       taskEmpty.textContent = "正在加载任务...";
-      var data = await requestApi(endpoints.tasks + "?" + query.join("&"), { method: "GET" });
+      var data = await requestApi(endpoints.myTasks + queryText, { method: "GET" }, true);
       state.tasks = Array.isArray(data.items) ? data.items : [];
       renderTaskList();
       renderStats();
@@ -243,13 +356,16 @@
       renderTaskList();
       renderStats();
       taskEmpty.style.display = "block";
-      taskEmpty.textContent = "任务加载失败，请先启动后端服务。";
+      taskEmpty.textContent = "任务加载失败，请重新登录。";
       showToast("任务加载失败：" + error.message);
+      if (String(error.message).toLowerCase().includes("unauthorized")) {
+        doLogout(false);
+      }
     }
   }
 
   async function createTask(payload) {
-    return requestApi(endpoints.tasks, {
+    return requestApi(endpoints.myTasks, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
@@ -257,7 +373,7 @@
   }
 
   async function deleteTask(taskId) {
-    return requestApi(endpoints.taskById(taskId), { method: "DELETE" });
+    return requestApi(endpoints.myTaskById(taskId), { method: "DELETE" });
   }
 
   async function handleEmergency() {
@@ -265,12 +381,10 @@
     if (!confirmed) return;
     try {
       await createTask({
-        userId: currentUser.id,
         title: "应急求助",
         category: "其他",
         priority: "urgent",
-        detail: "居民在客户端发起应急一键通请求",
-        status: "pending"
+        detail: "居民在客户端发起应急一键通请求"
       });
       showToast("应急请求已发送，任务已创建");
       await loadTasks();
@@ -283,12 +397,10 @@
   async function onTaskFormSubmit(event) {
     event.preventDefault();
     var payload = {
-      userId: currentUser.id,
       title: taskTitle.value.trim(),
       category: taskCategory.value.trim(),
       priority: taskPriority.value.trim(),
-      detail: taskDetail.value.trim(),
-      status: "pending"
+      detail: taskDetail.value.trim()
     };
     if (!payload.title || !payload.category || !payload.detail) {
       showToast("请先填写完整任务信息");
@@ -333,7 +445,156 @@
     }
   }
 
+  async function applyAuthPayload(payload) {
+    state.authToken = String(payload.token || "");
+    state.currentUser = normalizeUser(payload.user || {});
+    persistAuth();
+    updateUserInfo();
+    showAppView();
+    switchTab("home");
+    await loadTasks();
+  }
+
+  async function onLoginSubmit(event) {
+    event.preventDefault();
+    var formData = new FormData(loginForm);
+    var phone = String(formData.get("phone") || "").trim();
+    var password = String(formData.get("password") || "");
+    if (!/^1\d{10}$/.test(phone)) {
+      showToast("请输入正确手机号");
+      return;
+    }
+    if (password.length < 6) {
+      showToast("密码至少 6 位");
+      return;
+    }
+
+    loginBtn.disabled = true;
+    loginBtn.textContent = "登录中...";
+    try {
+      var payload = await requestApi(
+        endpoints.authLogin,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ phone: phone, password: password })
+        },
+        false
+      );
+      await applyAuthPayload(payload);
+      showToast("登录成功");
+      loginForm.reset();
+    } catch (error) {
+      showToast("登录失败：" + error.message);
+    } finally {
+      loginBtn.disabled = false;
+      loginBtn.textContent = "登录";
+    }
+  }
+
+  async function onRegisterSubmit(event) {
+    event.preventDefault();
+    var formData = new FormData(registerForm);
+    var name = String(formData.get("name") || "").trim();
+    var phone = String(formData.get("phone") || "").trim();
+    var community = String(formData.get("community") || "").trim();
+    var password = String(formData.get("password") || "");
+    var confirmPassword = String(formData.get("confirmPassword") || "");
+
+    if (!name) {
+      showToast("请输入姓名");
+      return;
+    }
+    if (!/^1\d{10}$/.test(phone)) {
+      showToast("请输入正确手机号");
+      return;
+    }
+    if (!community) {
+      showToast("请输入社区名称");
+      return;
+    }
+    if (password.length < 6) {
+      showToast("密码至少 6 位");
+      return;
+    }
+    if (password !== confirmPassword) {
+      showToast("两次密码输入不一致");
+      return;
+    }
+
+    registerBtn.disabled = true;
+    registerBtn.textContent = "注册中...";
+    try {
+      var payload = await requestApi(
+        endpoints.authRegister,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: name,
+            phone: phone,
+            community: community,
+            password: password
+          })
+        },
+        false
+      );
+      await applyAuthPayload(payload);
+      showToast("注册成功，已自动登录");
+      registerForm.reset();
+    } catch (error) {
+      showToast("注册失败：" + error.message);
+    } finally {
+      registerBtn.disabled = false;
+      registerBtn.textContent = "注册并登录";
+    }
+  }
+
+  async function doLogout(showMessage) {
+    try {
+      if (state.authToken) {
+        await requestApi(endpoints.authLogout, { method: "POST" }, true);
+      }
+    } catch (_error) {
+      // logout is best effort
+    }
+    clearAuth();
+    state.tasks = [];
+    renderTaskList();
+    renderStats();
+    showAuthView();
+    setAuthTab("login");
+    if (showMessage) {
+      showToast("已退出登录");
+    }
+  }
+
+  async function tryRestoreSession() {
+    if (!state.authToken) return false;
+    try {
+      var payload = await requestApi(endpoints.authMe, { method: "GET" }, true);
+      state.currentUser = normalizeUser(payload.user || {});
+      persistAuth();
+      updateUserInfo();
+      showAppView();
+      await loadTasks();
+      return true;
+    } catch (_error) {
+      clearAuth();
+      return false;
+    }
+  }
+
   function bindEvents() {
+    authTabs.forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        setAuthTab(btn.dataset.authTab || "login");
+      });
+    });
+
+    loginForm.addEventListener("submit", onLoginSubmit);
+    registerForm.addEventListener("submit", onRegisterSubmit);
+
     toggleLargeFont.addEventListener("click", function () {
       var enabled = appShell.classList.toggle("large-font");
       toggleLargeFont.textContent = "大字模式：" + (enabled ? "开" : "关");
@@ -363,15 +624,23 @@
     taskForm.addEventListener("submit", onTaskFormSubmit);
     taskList.addEventListener("click", onTaskListClick);
     statusFilter.addEventListener("change", loadTasks);
+    logoutBtn.addEventListener("click", function () {
+      doLogout(true);
+    });
   }
 
-  function bootstrap() {
-    if (currentUserIdEl) {
-      currentUserIdEl.textContent = currentUser.id;
-    }
+  async function bootstrap() {
     setToday();
     bindEvents();
-    loadTasks();
+    renderTaskList();
+    renderStats();
+    setAuthTab("login");
+
+    var restored = await tryRestoreSession();
+    if (!restored) {
+      showAuthView();
+      updateUserInfo();
+    }
   }
 
   bootstrap();

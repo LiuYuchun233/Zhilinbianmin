@@ -4,19 +4,25 @@
       "id": "resident-1001",
       "name": "王阿姨",
       "community": "海棠社区",
-      "phone": "138****1001"
+      "phone": "13800001001",
+      "passwordSalt": "83fa22142a1fdf812cb9d219dc0fcb7f",
+      "passwordHash": "7a46401a9c4f17694f8882047054b3ef3570b2d527718614dbd647070c5ca078e2a4118946f780298ccaf67a4a607cc349c7a226fc8c5aa1c11b150e3c081965"
     },
     {
       "id": "resident-1002",
       "name": "李叔叔",
-      "community": "兰亭社区",
-      "phone": "139****1022"
+      "community": "兰亭社区y",
+      "phone": "13900001002",
+      "passwordSalt": "24d6b1a3858570926c9afc52520bc7e8",
+      "passwordHash": "422b82f577b92a96c7711075d57261a742cc4a3bd1b2d817108433b6c58513f1f1307b73449a54e6f9b74da4e61fad44311fc3f02180ae6e5ce396d673189b10"
     },
     {
       "id": "resident-1003",
       "name": "张女士",
-      "community": "桂园社区",
-      "phone": "137****1033"
+      "community": "圭园社区",
+      "phone": "13700001003",
+      "passwordSalt": "b3423d8e3d19f65e6a29e2a8bbc60aef",
+      "passwordHash": "c36dc7576f0d33bb4b0725ee9c85b5f973e9a0901835c5b026dfe7edb26e432c441ce7a7042ba3ceb329237d64f45c8f4987502625a068c90e2662be6fed294d"
     }
   ]
 }

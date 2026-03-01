@@ -3,16 +3,62 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="智邻便民客户端 - 适老化便民服务界面演示">
+  <meta name="description" content="智邻便民客户端 - 手机号密码登录与便民任务服务演示">
   <title>智邻便民客户端</title>
+  <link rel="icon" type="image/svg+xml" href="./assets/images/site-icon.svg">
   <link rel="stylesheet" href="./assets/css/style.css">
 </head>
 <body>
-  <div class="app-shell" id="appShell">
+  <section id="authGate" class="auth-gate">
+    <div class="auth-card">
+      <p class="auth-kicker">智邻便民</p>
+      <h1>手机号 + 密码登录</h1>
+      <p class="auth-sub">新用户可先注册账号，再登录进入客户端。</p>
+
+      <div class="auth-tabs">
+        <button type="button" class="auth-tab is-active" data-auth-tab="login">登录</button>
+        <button type="button" class="auth-tab" data-auth-tab="register">注册</button>
+      </div>
+
+      <form id="loginForm" class="auth-form is-active">
+        <label for="loginPhone">手机号</label>
+        <input id="loginPhone" name="phone" type="tel" inputmode="numeric" pattern="^1[0-9]{10}$" placeholder="11 位手机号" required>
+
+        <label for="loginPassword">密码</label>
+        <input id="loginPassword" name="password" type="password" minlength="6" placeholder="至少 6 位" required>
+
+        <button class="primary-btn" type="submit" id="loginBtn">登录</button>
+      </form>
+
+      <form id="registerForm" class="auth-form">
+        <label for="registerName">姓名</label>
+        <input id="registerName" name="name" type="text" maxlength="30" placeholder="请输入姓名" required>
+
+        <label for="registerPhone">手机号</label>
+        <input id="registerPhone" name="phone" type="tel" inputmode="numeric" pattern="^1[0-9]{10}$" placeholder="11 位手机号" required>
+
+        <label for="registerCommunity">所在社区</label>
+        <input id="registerCommunity" name="community" type="text" maxlength="60" placeholder="如：海棠社区" required>
+
+        <label for="registerPassword">密码</label>
+        <input id="registerPassword" name="password" type="password" minlength="6" placeholder="至少 6 位" required>
+
+        <label for="registerConfirm">确认密码</label>
+        <input id="registerConfirm" name="confirmPassword" type="password" minlength="6" placeholder="请再次输入密码" required>
+
+        <button class="primary-btn" type="submit" id="registerBtn">注册并登录</button>
+      </form>
+
+      <p class="auth-hint">演示默认账号（密码均为 123456）：13800001001 / 13900001002 / 13700001003</p>
+    </div>
+  </section>
+
+  <div class="app-shell is-hidden" id="appShell">
     <header class="topbar">
       <div class="city">
         <p class="city-sub">社区便民服务中心</p>
         <h1>智邻便民客户端</h1>
+        <p class="signed-user">当前账号：<span id="currentUserPhone">-</span></p>
       </div>
       <div class="time-card">
         <p id="todayDate">--</p>
@@ -103,7 +149,7 @@
               <option value="completed">已办结</option>
             </select>
           </div>
-          <p class="api-hint">当前居民ID：<span id="currentUserId">-</span> | 接口：GET/POST/DELETE /api/tasks</p>
+          <p class="api-hint">登录手机号：<span id="currentUserId">-</span> | 接口：GET/POST/DELETE /api/me/tasks</p>
           <ul id="taskList" class="task-list"></ul>
           <p id="taskEmpty" class="empty-tip">暂无任务，先提交一条试试。</p>
         </section>
@@ -132,10 +178,11 @@
           <div class="profile-head">
             <img src="./assets/images/user-avatar.svg" alt="用户头像">
             <div>
-              <h2>王阿姨</h2>
-              <p>绑定社区：海棠社区 | 信用分：98</p>
+              <h2 id="profileUserName">当前居民</h2>
+              <p id="profileUserMeta">登录后可查看账号信息</p>
             </div>
           </div>
+          <button class="ghost-btn logout-btn" id="logoutBtn" type="button">退出登录</button>
           <div class="profile-stats">
             <article>
               <p class="num" id="taskCount">0</p>

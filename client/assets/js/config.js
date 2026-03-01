@@ -4,16 +4,21 @@
 
   window.APP_CONFIG = {
     API_BASE: baseFromQuery || "",
-    CURRENT_USER: {
-      id: "resident-1001",
-      name: "王阿姨"
+    STORAGE_KEYS: {
+      authToken: "zlbm_auth_token",
+      currentUser: "zlbm_current_user"
     },
     ENDPOINTS: {
       users: "/api/users",
-      tasks: "/api/tasks",
-      taskById: function (id) {
-        return "/api/tasks/" + encodeURIComponent(id);
+      authRegister: "/api/auth/register",
+      authLogin: "/api/auth/login",
+      authMe: "/api/auth/me",
+      authLogout: "/api/auth/logout",
+      myTasks: "/api/me/tasks",
+      myTaskById: function (id) {
+        return "/api/me/tasks/" + encodeURIComponent(id);
       },
+      tasks: "/api/tasks",
       taskStatus: function (id) {
         return "/api/tasks/" + encodeURIComponent(id) + "/status";
       }
